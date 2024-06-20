@@ -4,6 +4,10 @@ This is a simple and lightweight framework that helps you create Telegram bots f
 
 ## Usage
 
+Example projects can be found at: 
+- [Console Application example](https://github.com/tipalol/Telegram.Bot.Framework/tree/main/Telegram.Bot.Framework.TestClient)
+- [Web Application example](https://github.com/tipalol/Telegram.Bot.Framework/tree/main/Telegram.Bot.Framework.WebClient)
+
 Here's an example of how to use the framework to create a simple bot that replies the same text when a user sends a text message:
 
 ```c#
