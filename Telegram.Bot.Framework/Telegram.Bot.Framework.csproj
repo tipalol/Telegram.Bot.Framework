@@ -16,6 +16,7 @@
         <PackageReleaseNotes>Initial</PackageReleaseNotes>
         <PackageId>Telegram.Bot.Maker</PackageId>
         <PackageIcon>telegram.png</PackageIcon>
+        <PackageLicenseUrl>https://github.com/tipalol/Telegram.Bot.Framework/blob/main/Telegram.Bot.Framework/LICENSE</PackageLicenseUrl>
     </PropertyGroup>
 
     <ItemGroup>
