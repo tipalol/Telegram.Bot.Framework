@@ -12,6 +12,13 @@ public static class HandlersConfiguration
     public static List<IMessageHandler<Message>>? MessageHandlers { get; set; }
     public static List<IMessageHandler<Message>>? CallbacksHandlers { get; set; }
 
+    public static void Configure(List<IMessageHandler<Message>> messageHandlers,
+        List<IMessageHandler<Message>> callbackHandlers = null)
+    {
+        MessageHandlers = messageHandlers;
+        CallbacksHandlers = callbackHandlers;
+    }
+
     /// <summary>
     /// Check if there is handlers configured
     /// </summary>
