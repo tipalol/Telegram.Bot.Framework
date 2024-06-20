@@ -4,11 +4,30 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>Telegram Bot Maker Framework</Title>
+        <Authors>tipalol</Authors>
+        <Description>Framework for Telegram Bot API. You can use to boost developing Telegram bots using C#. Example projects, usage and documentation can be found at my Github repository</Description>
+        <Copyright>Copyright (c) Sorokin Dmitrii (tipalol2@gmail.com) 2024</Copyright>
+        <PackageProjectUrl>https://github.com/tipalol/Telegram.Bot.Framework/tree/main</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/tipalol/Telegram.Bot.Framework/tree/main</RepositoryUrl>
+        <RepositoryType>Github</RepositoryType>
+        <PackageTags>telegram bot maker</PackageTags>
+        <PackageReleaseNotes>Initial</PackageReleaseNotes>
+        <PackageId>Telegram.Bot.Maker</PackageId>
+        <PackageIcon>telegram.png</PackageIcon>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
       <PackageReference Include="Telegram.Bot" Version="19.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="telegram.png">
+        <Pack>True</Pack>
+        <PackagePath></PackagePath>
+      </None>
     </ItemGroup>
 
 </Project>
