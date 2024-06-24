@@ -1,6 +1,6 @@
 using Telegram.Bot.Exceptions;
 
-namespace Telegram.Bot.Framework.Handlers.Base;
+namespace Telegram.Bot.Framework.Handlers.Internal;
 
 public static class ErrorHandler
 {

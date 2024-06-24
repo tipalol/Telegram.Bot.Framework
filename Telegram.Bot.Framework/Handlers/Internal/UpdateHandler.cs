@@ -2,7 +2,7 @@ using Telegram.Bot.Framework.Handlers.Utils;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace Telegram.Bot.Framework.Handlers.Base;
+namespace Telegram.Bot.Framework.Handlers.Internal;
 
 public static class UpdateHandler
 {

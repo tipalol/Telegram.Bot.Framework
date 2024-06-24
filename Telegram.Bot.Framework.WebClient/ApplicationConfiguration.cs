@@ -1,6 +1,6 @@
 using Telegram.Bot.Framework.Abstractions;
 using Telegram.Bot.Framework.Handlers;
-using Telegram.Bot.Framework.Handlers.Interfaces;
+using Telegram.Bot.Framework.Handlers.Base;
 using Telegram.Bot.Framework.Handlers.Utils;
 using Telegram.Bot.Framework.WebClient.Handlers;
 using Telegram.Bot.Framework.WebClient.Handlers.Callbacks;
@@ -38,7 +38,7 @@ public static class ApplicationConfiguration
     /// </summary>
     private static bool ConfigureTelegramHandlers(IServiceProvider serviceProvider)
     {
-        List<IMessageHandler<Message>> messageHandlers = 
+        List<HandlerBase<Message>> messageHandlers = 
         [
             new SubscriptionMiddleware(serviceProvider),
             new StartHandler(),
@@ -46,7 +46,7 @@ public static class ApplicationConfiguration
             new TextHandler(serviceProvider)
         ];
         
-        List<IMessageHandler<Message>> callbackHandlers = 
+        List<HandlerBase<Message>>? callbackHandlers = 
         [
             new SomeCallbackHandler()
         ];

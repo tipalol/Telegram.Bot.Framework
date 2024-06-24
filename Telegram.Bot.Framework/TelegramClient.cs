@@ -1,7 +1,8 @@
-using Microsoft.Extensions.Configuration;
 using Telegram.Bot.Framework.Abstractions;
+using Telegram.Bot.Framework.Configuration;
 using Telegram.Bot.Framework.Handlers;
 using Telegram.Bot.Framework.Handlers.Base;
+using Telegram.Bot.Framework.Handlers.Internal;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types.Enums;
 
@@ -15,9 +16,9 @@ public sealed class TelegramClient : ITelegramClient
     /// </summary>
     private readonly ITelegramBotClient _client;
 
-    public TelegramClient(IConfiguration configuration)
+    public TelegramClient(TelegramSettings settings)
     {
-        var token = configuration["TelegramSettings:Token"];
+        var token = settings.Token;
         
         if (string.IsNullOrEmpty(token))
         {

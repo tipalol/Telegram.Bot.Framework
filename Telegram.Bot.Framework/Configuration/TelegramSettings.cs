@@ -8,5 +8,5 @@ public sealed class TelegramSettings
     /// <summary>
     /// Authorization token
     /// </summary>
-    public required string Token { get; set; }
+    public required string Token { get; init; }
 }
