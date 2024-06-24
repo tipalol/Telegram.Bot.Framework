@@ -1,7 +1,5 @@
 using Telegram.Bot.Framework.Abstractions;
-using Telegram.Bot.Framework.Handlers;
-using Telegram.Bot.Framework.Handlers.Base;
-using Telegram.Bot.Framework.Handlers.Utils;
+using Telegram.Bot.Framework.Pipelines;
 using Telegram.Bot.Framework.WebClient.Handlers;
 using Telegram.Bot.Framework.WebClient.Handlers.Callbacks;
 using Telegram.Bot.Framework.WebClient.Handlers.Middlewares;
@@ -38,20 +36,18 @@ public static class ApplicationConfiguration
     /// </summary>
     private static bool ConfigureTelegramHandlers(IServiceProvider serviceProvider)
     {
-        List<HandlerBase<Message>> messageHandlers = 
-        [
-            new SubscriptionMiddleware(serviceProvider),
-            new StartHandler(),
-            new MenuHandler(),
-            new TextHandler(serviceProvider)
-        ];
+        var messageHandlers = new PipelineBuilder()
+            .WithMiddleware(new SubscriptionMiddleware(serviceProvider))
+            .WithMessageHandler(new StartHandler())
+            .WithMessageHandler(new MenuHandler())
+            .WithMessageHandler(new TextHandler(serviceProvider))
+            .Build();
+
+        var callbackHandlers = new PipelineBuilder()
+            .WithMessageHandler(new SomeCallbackHandler())
+            .Build();
         
-        List<HandlerBase<Message>>? callbackHandlers = 
-        [
-            new SomeCallbackHandler()
-        ];
-        
-        HandlersConfiguration.Configure(messageHandlers, callbackHandlers);
+        PipelinesManager.ConfigureBase(messageHandlers, callbackHandlers);
         
         return true;
     }

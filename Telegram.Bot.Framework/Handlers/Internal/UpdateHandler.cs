@@ -1,4 +1,5 @@
 using Telegram.Bot.Framework.Handlers.Utils;
+using Telegram.Bot.Framework.Pipelines;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -34,9 +35,9 @@ public static class UpdateHandler
                         case MessageType.Text:
                         {
                             // Initialize handlers pipeline
-                            var handlers = HandlersConfiguration.MessageHandlers;
+                            var handlers = PipelinesManager.BaseMessageHandlers;
 
-                            var messageProcessor = new MessageProcessor(handlers!);
+                            var messageProcessor = new MessageProcessor(handlers);
                             await messageProcessor.ProcessAsync(TextMessage.From(message), botClient, cancellationToken);
                             
                             return;
@@ -60,10 +61,10 @@ public static class UpdateHandler
                     var user = callbackQuery!.From;
 
                     // Output for debug purposes with button and sender info
-                    Console.WriteLine($"{user.FirstName} ({user.Id}) нажал на кнопку: {callbackQuery.Data}");
+                    Console.WriteLine($"{user.FirstName} ({user.Id}) pressed the button: {callbackQuery.Data}");
                     
                     // Initialize handlers
-                    var handlers = HandlersConfiguration.CallbacksHandlers;
+                    var handlers = PipelinesManager.BaseCallbacksHandlers;
 
                     var messageProcessor = new MessageProcessor(handlers!);
                     await messageProcessor.ProcessAsync(CallbackMessage.From(callbackQuery), botClient, cancellationToken);
