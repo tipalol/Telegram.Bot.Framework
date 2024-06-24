@@ -7,7 +7,7 @@ using Telegram.Bot.Framework.TestClient.Handlers.Middlewares;
 
 var settings = new TelegramSettings
 {
-    Token = "7426407451:AAFwhrNZGMy5SHlv0bF_MlT_U91Qlj52kQo"
+    Token = "your_api_token"
 };
 
 var handlers = new PipelineBuilder()

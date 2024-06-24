@@ -1,10 +1,10 @@
 # Telegram Bot API Framework
 
-This is a simple and lightweight framework that helps you create Telegram bots faster. It uses the [Telegram Bot API](https://core.telegram.org/bots) 
+This is a simple and lightweight framework that helps you create Telegram bots faster. It uses the [Telegram Bot API](https://core.telegram.org/bots)
 
 ## Usage
 
-Example projects can be found at: 
+Example projects can be found at:
 - [Console Application example](https://github.com/tipalol/Telegram.Bot.Framework/tree/main/Telegram.Bot.Framework.TestClient)
 - [Web Application example](https://github.com/tipalol/Telegram.Bot.Framework/tree/main/Telegram.Bot.Framework.WebClient)
 
@@ -13,16 +13,20 @@ Here's an example of how to use the framework to create a simple bot that replie
 ```c#
 // Program.cs
 
+var settings = new TelegramSettings
+{
+    Token = "7426407451:AAFwhrNZGMy5SHlv0bF_MlT_U91Qlj52kQo"
+};
+
+var handlers = new PipelineBuilder()
+    .WithMiddleware(new SubscriptionMiddleware())
+    .WithMessageHandler(new StartHandler())
+    .WithMessageHandler(new TextHandler())
+    .Build();
+
 // initialize telegram client
-ITelegramClient telegramClient = new TelegramClient(configuration);
-
-// define your handlers (note that order is important)
-List<IMessageHandler<Message>> handlers = 
-[
-    new TextHandler()
-];
-
-HandlersConfiguration.Configure(handlers);
+ITelegramClient telegramClient = new TelegramClient(settings)
+    .ConfigureBasePipelines(handlers);
 
 await telegramClient.Start();
 ```
@@ -33,21 +37,18 @@ await telegramClient.Start();
 /// <summary>
 /// Handles all text messages
 /// </summary>
-public class TextHandler : IMessageHandler<Message>
+public class TextHandler : MessageHandler
 {
-    public bool CanHandle(Message message)
+    public override bool CanHandle(Message message)
     {
         return true;
     }
 
-    public async Task HandleAsync(Message message, ITelegramBotClient botClient, CancellationToken cancellationToken)
+    public override async Task HandleAsync(Message message, ITelegramBotClient botClient, CancellationToken cancellationToken)
     {
         await botClient.SendTextMessageAsync(message.ChatId, $"You said: {message.Data}",
             cancellationToken: cancellationToken);
     }
-
-    public HandlerType Type => HandlerType.MessageHandler;
-    public bool Successful { get; }
 }
 ```
 
@@ -61,21 +62,18 @@ You can add more commands by adding new handlers like this one:
 /// <summary>
 /// Handles /start message
 /// </summary>
-public class StartHandler : IMessageHandler<Message>
+public class StartHandler : MessageHandler
 {
     /// <inheritdoc/>
-    public bool CanHandle(Message message)
+    public override bool CanHandle(Message message)
     {
         return message.Data is "/start";
     }
 
-    public async Task HandleAsync(Message message, ITelegramBotClient botClient, CancellationToken cancellationToken)
+    public override async Task HandleAsync(Message message, ITelegramBotClient botClient, CancellationToken cancellationToken)
     {
         await botClient.SendTextMessageAsync(message.ChatId, "Hello, I'm working!", cancellationToken: cancellationToken);
     }
-
-    public HandlerType Type => HandlerType.MessageHandler;
-    public bool Successful { get; }
 }
 ```
 
@@ -86,23 +84,20 @@ Callback data is used to pass information between different functions in your bo
 ```c#
 // SomeCallbackHandler.cs
 
-public class SomeCallbackHandler : IMessageHandler<Message>
+public class SomeCallbackHandler : MessageHandler
 {
-    public bool CanHandle(Message message)
+    public override bool CanHandle(Message message)
     {
         return message.Data is "some_request";
     }
 
-    public async Task HandleAsync(Message message, ITelegramBotClient botClient, CancellationToken cancellationToken)
+    public override async Task HandleAsync(Message message, ITelegramBotClient botClient, CancellationToken cancellationToken)
     {
         await botClient.SendTextMessageAsync(message.ChatId, "Alright, you?", cancellationToken: cancellationToken);
         
         // we must say OK to Telegram API, so it knows callback is handled
         await botClient.CallbackOk(message, cancellationToken);
     }
-
-    public HandlerType Type => HandlerType.MessageHandler;
-    public bool Successful { get; }
 }
 ```
 
@@ -113,21 +108,20 @@ Reply markups are used to provide additional options or buttons for users to int
 ```c#
 //MenuHandler.cs
 
-public class MenuHandler : IMessageHandler<Message>
+public class MenuHandler : MessageHandler
 {
-    public bool CanHandle(Message message)
+    /// <inheritdoc/>
+    public override bool CanHandle(Message message)
     {
         return message.Data is "/menu";
     }
 
-    public async Task HandleAsync(Message message, ITelegramBotClient botClient, CancellationToken cancellationToken)
+    /// <inheritdoc/>
+    public override async Task HandleAsync(Message message, ITelegramBotClient botClient, CancellationToken cancellationToken)
     {
         await botClient.SendTextMessageAsync(message.ChatId, "Main menu", replyMarkup: MenuProvider.MainMenu,
             cancellationToken: cancellationToken);
     }
-
-    public HandlerType Type => HandlerType.MessageHandler;
-    public bool Successful { get; }
 }
 
 // MenuProvider.cs
@@ -137,5 +131,36 @@ public static class MenuProvider
     public static InlineKeyboardMarkup MainMenu { get; } = new InlineMenuBuilder()
         .WithButton("What's up?", "some_request")
         .Build();
+}
+```
+
+### Middlewares
+
+```c#
+//SubscriptionMiddleware.cs
+
+public class SubscriptionMiddleware(IServiceProvider serviceProvider) : Middleware
+{
+    /// <inheritdoc />
+    public override bool CanHandle(Message message)
+    {
+        return message.Data is not "/start";
+    }
+
+    /// <inheritdoc/>
+    public override async Task HandleAsync(Message message, ITelegramBotClient botClient, CancellationToken cancellationToken)
+    {
+        var subscriptionService = serviceProvider.GetRequiredService<ISubscriptionService>();
+        var subscribed = subscriptionService.CheckSubscription(message.ChatId);
+
+        if (subscribed)
+        {
+            Successful = true;
+            return;
+        }
+
+        await botClient.SendTextMessageAsync(message.ChatId, 
+            "We can't find your subscription. Access is denied", cancellationToken: cancellationToken);
+    }
 }
 ```
