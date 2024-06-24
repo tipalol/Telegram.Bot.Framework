@@ -11,9 +11,9 @@ var settings = new TelegramSettings
 };
 
 var handlers = new PipelineBuilder()
-    .WithMiddleware(new SubscriptionMiddleware())
-    .WithMessageHandler(new StartHandler())
-    .WithMessageHandler(new TextHandler())
+    .WithMiddleware<SubscriptionMiddleware>()
+    .WithMessageHandler<StartHandler>()
+    .WithMessageHandler<TextHandler>()
     .Build();
 
 // initialize telegram client

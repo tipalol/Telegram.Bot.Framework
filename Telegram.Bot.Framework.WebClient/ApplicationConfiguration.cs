@@ -38,13 +38,13 @@ public static class ApplicationConfiguration
     {
         var messageHandlers = new PipelineBuilder()
             .WithMiddleware(new SubscriptionMiddleware(serviceProvider))
-            .WithMessageHandler(new StartHandler())
-            .WithMessageHandler(new MenuHandler())
+            .WithMessageHandler<StartHandler>()
+            .WithMessageHandler<MenuHandler>()
             .WithMessageHandler(new TextHandler(serviceProvider))
             .Build();
 
         var callbackHandlers = new PipelineBuilder()
-            .WithMessageHandler(new SomeCallbackHandler())
+            .WithMessageHandler<SomeCallbackHandler>()
             .Build();
         
         PipelinesManager.ConfigureBase(messageHandlers, callbackHandlers);

@@ -8,6 +8,27 @@ public class PipelineBuilder
 {
     private List<HandlerBase<Message>> Handlers { get; } = [];
 
+    public PipelineBuilder WithMiddleware<TMiddleware>() where TMiddleware : Middleware, new()
+    {
+        Handlers.Add(new TMiddleware());
+
+        return this;
+    }
+    
+    public PipelineBuilder WithMessageHandler<TMessageHandler>() where TMessageHandler : MessageHandler, new()
+    {
+        Handlers.Add(new TMessageHandler());
+
+        return this;
+    }
+    
+    public PipelineBuilder WithCustomHandler<TCustomHandler>() where TCustomHandler : HandlerBase<Message>, new()
+    {
+        Handlers.Add(new TCustomHandler());
+
+        return this;
+    }
+
     public PipelineBuilder WithMiddleware(Middleware middleware)
     {
         Handlers.Add(middleware);
