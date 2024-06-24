@@ -1,5 +1,4 @@
-using Telegram.Bot.Framework.Enums;
-using Telegram.Bot.Framework.Handlers.Interfaces;
+using Telegram.Bot.Framework.Handlers.Base;
 
 namespace Telegram.Bot.Framework.Handlers.Utils;
 
@@ -7,7 +6,7 @@ namespace Telegram.Bot.Framework.Handlers.Utils;
 /// Message handling pipeline
 /// </summary>
 /// <param name="handlers">Message handlers <see cref="IMessageHandler"/></param>
-public class MessageProcessor(IEnumerable<IMessageHandler<Message>> handlers)
+public class MessageProcessor(IEnumerable<HandlerBase<Message>> handlers)
 {
     /// <summary>
     /// Process the message
@@ -18,14 +17,13 @@ public class MessageProcessor(IEnumerable<IMessageHandler<Message>> handlers)
         {
             // Check if handler can process the message
             // if not - continue pipeline
-            if (!handler.CanHandle(message)) continue;
+            if (handler.CanHandle(message) is false) continue;
             
             // Handle the message
             await handler.HandleAsync(message, botClient, cancellationToken);
                 
             // If this is middleware and everything is ok - continue
-            if (handler.Type is HandlerType.Middleware && handler.Successful)
-                continue;
+            if (handler is Middleware { Successful: true }) continue;
                 
             return;
         }

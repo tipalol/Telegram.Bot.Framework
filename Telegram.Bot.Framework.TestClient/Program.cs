@@ -1,28 +1,23 @@
-﻿using Microsoft.Extensions.Configuration;
-using Telegram.Bot.Framework;
+﻿using Telegram.Bot.Framework;
 using Telegram.Bot.Framework.Abstractions;
-using Telegram.Bot.Framework.Handlers;
-using Telegram.Bot.Framework.Handlers.Interfaces;
-using Telegram.Bot.Framework.Handlers.Utils;
+using Telegram.Bot.Framework.Configuration;
+using Telegram.Bot.Framework.Pipelines;
 using Telegram.Bot.Framework.TestClient.Handlers;
 using Telegram.Bot.Framework.TestClient.Handlers.Middlewares;
 
-// without appsettings.json
-var configuration = new ConfigurationBuilder()
-    .AddInMemoryCollection([new KeyValuePair<string, string?>("TelegramSettings:Token", "your_access_token")])
+var settings = new TelegramSettings
+{
+    Token = "your_api_token"
+};
+
+var handlers = new PipelineBuilder()
+    .WithMiddleware(new SubscriptionMiddleware())
+    .WithMessageHandler(new StartHandler())
+    .WithMessageHandler(new TextHandler())
     .Build();
 
 // initialize telegram client
-ITelegramClient telegramClient = new TelegramClient(configuration);
-
-// define your handlers (note that order is important)
-List<IMessageHandler<Message>> handlers = 
-[
-    new SubscriptionMiddleware(),
-    new StartHandler(),
-    new TextHandler()
-];
-
-HandlersConfiguration.Configure(handlers);
+ITelegramClient telegramClient = new TelegramClient(settings)
+    .ConfigureBasePipelines(handlers);
 
 await telegramClient.Start();
