@@ -15,13 +15,13 @@ Here's an example of how to use the framework to create a simple bot that replie
 
 var settings = new TelegramSettings
 {
-    Token = "7426407451:AAFwhrNZGMy5SHlv0bF_MlT_U91Qlj52kQo"
+    Token = "your_api_token"
 };
 
 var handlers = new PipelineBuilder()
-    .WithMiddleware(new SubscriptionMiddleware())
-    .WithMessageHandler(new StartHandler())
-    .WithMessageHandler(new TextHandler())
+    .WithMiddleware<SubscriptionMiddleware>()
+    .WithMessageHandler<StartHandler>()
+    .WithMessageHandler<TextHandler>()
     .Build();
 
 // initialize telegram client
