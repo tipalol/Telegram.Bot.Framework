@@ -27,6 +27,8 @@ public static class ApplicationConfiguration
     /// </summary>
     private static IServiceCollection ConfigureTelegram(this IServiceCollection services, Func<IServiceProvider, (IEnumerable<HandlerBase<Framework.Handlers.Utils.Message>>, IEnumerable<HandlerBase<Framework.Handlers.Utils.Message>>?)> handlersFactory)
     {
+        services.AddSingleton(new TelegramSettings { Token = "your_api_token" });
+        
         services.AddSingleton<ITelegramClient>(provider =>
         {
             var settings = provider.GetRequiredService<TelegramSettings>();
