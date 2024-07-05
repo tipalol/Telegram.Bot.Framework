@@ -1,16 +1,19 @@
+using Telegram.Bot.Framework.Handlers.Base;
 using Telegram.Bot.Framework.Handlers.Utils;
-using Telegram.Bot.Framework.Pipelines;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Message = Telegram.Bot.Framework.Handlers.Utils.Message;
 
 namespace Telegram.Bot.Framework.Handlers.Internal;
 
-public static class UpdateHandler
+public class UpdateHandler(
+    IEnumerable<HandlerBase<Message>> messageHandlers,
+    IEnumerable<HandlerBase<Message>>? callbackHandlers = null)
 {
     /// <summary>
     /// Telegram updates handler
     /// </summary>
-    public static async Task Handle(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
+    public async Task Handle(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
     {
         try
         {
@@ -34,10 +37,7 @@ public static class UpdateHandler
                     {
                         case MessageType.Text:
                         {
-                            // Initialize handlers pipeline
-                            var handlers = PipelinesManager.BaseMessageHandlers;
-
-                            var messageProcessor = new MessageProcessor(handlers);
+                            var messageProcessor = new MessageProcessor(messageHandlers);
                             await messageProcessor.ProcessAsync(TextMessage.From(message), botClient, cancellationToken);
                             
                             return;
@@ -62,11 +62,8 @@ public static class UpdateHandler
 
                     // Output for debug purposes with button and sender info
                     Console.WriteLine($"{user.FirstName} ({user.Id}) pressed the button: {callbackQuery.Data}");
-                    
-                    // Initialize handlers
-                    var handlers = PipelinesManager.BaseCallbacksHandlers;
 
-                    var messageProcessor = new MessageProcessor(handlers!);
+                    var messageProcessor = new MessageProcessor(callbackHandlers!);
                     await messageProcessor.ProcessAsync(CallbackMessage.From(callbackQuery), botClient, cancellationToken);
                     
                     return;
