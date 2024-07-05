@@ -1,4 +1,6 @@
 using Telegram.Bot.Framework.Abstractions;
+using Telegram.Bot.Framework.Configuration;
+using Telegram.Bot.Framework.Handlers.Base;
 using Telegram.Bot.Framework.Pipelines;
 using Telegram.Bot.Framework.WebClient.Handlers;
 using Telegram.Bot.Framework.WebClient.Handlers.Callbacks;
@@ -15,26 +17,30 @@ public static class ApplicationConfiguration
     {
         services.ConfigureTelegram(ConfigureTelegramHandlers);
         
-        return services;
-    }
-    
-    /// <summary>
-    /// Add Telegram client to DI and configure it
-    /// </summary>
-    private static IServiceCollection ConfigureTelegram(this IServiceCollection services, Func<IServiceProvider, bool> handlersSetter)
-    {
-        services.AddSingleton<ITelegramClient, TelegramClient>();
         services.AddSingleton<ISubscriptionService, SubscriptionService>();
-
-        handlersSetter.Invoke(services.BuildServiceProvider());
+        
+        return services;
+    }
+    
+    /// <summary>
+    /// Add Telegram client to DI and configure it.
+    /// </summary>
+    private static IServiceCollection ConfigureTelegram(this IServiceCollection services, Func<IServiceProvider, (IEnumerable<HandlerBase<Framework.Handlers.Utils.Message>>, IEnumerable<HandlerBase<Framework.Handlers.Utils.Message>>?)> handlersFactory)
+    {
+        services.AddSingleton<ITelegramClient>(provider =>
+        {
+            var settings = provider.GetRequiredService<TelegramSettings>();
+            var (messageHandlers, callbackHandlers) = handlersFactory(provider);
+            return new TelegramClient(settings, messageHandlers, callbackHandlers);
+        });
 
         return services;
     }
     
     /// <summary>
-    /// Configure Telegram handlers
+    /// Configure Telegram handlers.
     /// </summary>
-    private static bool ConfigureTelegramHandlers(IServiceProvider serviceProvider)
+    private static (IEnumerable<HandlerBase<Framework.Handlers.Utils.Message>>, IEnumerable<HandlerBase<Framework.Handlers.Utils.Message>>?) ConfigureTelegramHandlers(IServiceProvider serviceProvider)
     {
         var messageHandlers = new PipelineBuilder()
             .WithMiddleware(new SubscriptionMiddleware(serviceProvider))
@@ -47,9 +53,7 @@ public static class ApplicationConfiguration
             .WithMessageHandler<SomeCallbackHandler>()
             .Build();
         
-        PipelinesManager.ConfigureBase(messageHandlers, callbackHandlers);
-        
-        return true;
+        return (messageHandlers, callbackHandlers);
     }
     
     /// <summary>

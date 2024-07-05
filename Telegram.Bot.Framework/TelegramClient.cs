@@ -16,9 +16,10 @@ public sealed class TelegramClient : ITelegramClient
     /// Telegram Bot API client
     /// </summary>
     private readonly ITelegramBotClient _client;
-    private UpdateHandler _updateHandler;
+    private UpdateHandler? _updateHandler;
 
-    public TelegramClient(TelegramSettings settings)
+    public TelegramClient(TelegramSettings settings, IEnumerable<HandlerBase<Message>>? messageHandlers = null,
+        IEnumerable<HandlerBase<Message>>? callbackHandlers = null)
     {
         var token = settings.Token;
         
@@ -26,6 +27,9 @@ public sealed class TelegramClient : ITelegramClient
         {
             throw new ArgumentException("Telegram token is missing or invalid in the configuration.");
         }
+
+        if (messageHandlers is not null)
+            ConfigureBasePipelines(messageHandlers, callbackHandlers);
         
         _client = new TelegramBotClient(token);
     }
