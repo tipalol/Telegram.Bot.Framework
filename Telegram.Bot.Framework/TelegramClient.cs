@@ -16,6 +16,7 @@ public sealed class TelegramClient : ITelegramClient
     /// Telegram Bot API client
     /// </summary>
     private readonly ITelegramBotClient _client;
+    private UpdateHandler _updateHandler;
 
     public TelegramClient(TelegramSettings settings)
     {
@@ -51,7 +52,7 @@ public sealed class TelegramClient : ITelegramClient
         
         // UpdateHandler - handler for incoming updates
         // ErrorHandler - Bot API error handler
-        _client.StartReceiving(UpdateHandler.Handle, ErrorHandler.Handle, _receiverOptions, cts.Token); // Запускаем бота
+        _client.StartReceiving(_updateHandler.Handle, ErrorHandler.Handle, _receiverOptions, cts.Token); // Запускаем бота
         
         await Task.Delay(Timeout.Infinite, cts.Token); // Delay for infinite bot receiving
     }
@@ -59,8 +60,8 @@ public sealed class TelegramClient : ITelegramClient
     public ITelegramClient ConfigureBasePipelines(IEnumerable<HandlerBase<Message>> messageHandlers,
         IEnumerable<HandlerBase<Message>>? callbackHandlers = null)
     {
-        PipelinesManager.ConfigureBase(messageHandlers, callbackHandlers);
-
+        _updateHandler = new UpdateHandler(messageHandlers, callbackHandlers);
+        
         return this;
     }
 }

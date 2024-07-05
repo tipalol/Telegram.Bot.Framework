@@ -13,13 +13,13 @@
         <RepositoryUrl>https://github.com/tipalol/Telegram.Bot.Framework/tree/main</RepositoryUrl>
         <RepositoryType>Github</RepositoryType>
         <PackageTags>telegram bot maker</PackageTags>
-        <PackageReleaseNotes>Initial</PackageReleaseNotes>
+        <PackageReleaseNotes>Added support for different telegram clients with different handler pipelines</PackageReleaseNotes>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
         <PackageReleaseNotes>Reworked pipelines and configuration, also reworked handlers abstractions</PackageReleaseNotes>
         <PackageId>Telegram.Bot.Maker</PackageId>
         <PackageIcon>telegram.png</PackageIcon>
         <PackageLicenseUrl>https://github.com/tipalol/Telegram.Bot.Framework/blob/main/Telegram.Bot.Framework/LICENSE</PackageLicenseUrl>
-        <Version>1.0.6</Version>
+        <Version>1.0.7</Version>
     </PropertyGroup>
 
     <ItemGroup>
