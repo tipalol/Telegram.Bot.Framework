@@ -1,5 +1,6 @@
 using Telegram.Bot.Framework.Handlers.Base;
 using Telegram.Bot.Framework.Handlers.Utils;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Telegram.Bot.Framework.Abstractions;
 
@@ -15,4 +16,8 @@ public interface ITelegramClient
 
     ITelegramClient ConfigureBasePipelines(IEnumerable<HandlerBase<Message>> messageHandlers,
         IEnumerable<HandlerBase<Message>>? callbackHandlers = null);
+
+    Task SendText(long chatId, string text, ReplyKeyboardMarkup? replyMarkup = null);
+    
+    Task SendImage(long chatId, string imageUrl, string text, ReplyKeyboardMarkup? replyMarkup = null);
 }

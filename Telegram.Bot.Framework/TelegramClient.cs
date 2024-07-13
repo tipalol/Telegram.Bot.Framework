@@ -2,10 +2,11 @@ using Telegram.Bot.Framework.Abstractions;
 using Telegram.Bot.Framework.Configuration;
 using Telegram.Bot.Framework.Handlers.Base;
 using Telegram.Bot.Framework.Handlers.Internal;
-using Telegram.Bot.Framework.Handlers.Utils;
-using Telegram.Bot.Framework.Pipelines;
 using Telegram.Bot.Polling;
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
+using Message = Telegram.Bot.Framework.Handlers.Utils.Message;
 
 namespace Telegram.Bot.Framework;
 
@@ -67,5 +68,21 @@ public sealed class TelegramClient : ITelegramClient
         _updateHandler = new UpdateHandler(messageHandlers, callbackHandlers);
         
         return this;
+    }
+
+    public async Task SendText(long chatId, string text, ReplyKeyboardMarkup? replyMarkup = null)
+    {
+        if (replyMarkup is not null)
+            await _client.SendTextMessageAsync(new ChatId(chatId), text, replyMarkup: replyMarkup);
+        else
+            await _client.SendTextMessageAsync(new ChatId(chatId), text);
+    }
+
+    public async Task SendImage(long chatId, string imageUrl, string text, ReplyKeyboardMarkup? replyMarkup)
+    {
+        if (replyMarkup is not null)
+            await _client.SendPhotoAsync(new ChatId(chatId), new InputFileUrl(imageUrl), caption: text, replyMarkup: replyMarkup);
+        else
+            await _client.SendPhotoAsync(new ChatId(chatId), new InputFileUrl(imageUrl), caption: text);
     }
 }
