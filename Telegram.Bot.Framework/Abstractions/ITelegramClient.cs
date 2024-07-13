@@ -17,7 +17,7 @@ public interface ITelegramClient
     ITelegramClient ConfigureBasePipelines(IEnumerable<HandlerBase<Message>> messageHandlers,
         IEnumerable<HandlerBase<Message>>? callbackHandlers = null);
 
-    Task SendText(long chatId, string text, ReplyKeyboardMarkup? replyMarkup = null);
+    Task SendText(long chatId, string text, InlineKeyboardMarkup? replyMarkup = null);
     
-    Task SendImage(long chatId, string imageUrl, string text, ReplyKeyboardMarkup? replyMarkup = null);
+    Task SendImage(long chatId, string imageUrl, string text, InlineKeyboardMarkup? replyMarkup = null);
 }

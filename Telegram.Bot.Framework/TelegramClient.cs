@@ -70,7 +70,7 @@ public sealed class TelegramClient : ITelegramClient
         return this;
     }
 
-    public async Task SendText(long chatId, string text, ReplyKeyboardMarkup? replyMarkup = null)
+    public async Task SendText(long chatId, string text, InlineKeyboardMarkup? replyMarkup = null)
     {
         if (replyMarkup is not null)
             await _client.SendTextMessageAsync(new ChatId(chatId), text, replyMarkup: replyMarkup);
@@ -78,7 +78,7 @@ public sealed class TelegramClient : ITelegramClient
             await _client.SendTextMessageAsync(new ChatId(chatId), text);
     }
 
-    public async Task SendImage(long chatId, string imageUrl, string text, ReplyKeyboardMarkup? replyMarkup)
+    public async Task SendImage(long chatId, string imageUrl, string text, InlineKeyboardMarkup? replyMarkup)
     {
         if (replyMarkup is not null)
             await _client.SendPhotoAsync(new ChatId(chatId), new InputFileUrl(imageUrl), caption: text, replyMarkup: replyMarkup);
