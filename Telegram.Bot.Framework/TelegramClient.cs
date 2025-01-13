@@ -70,19 +70,19 @@ public sealed class TelegramClient : ITelegramClient
         return this;
     }
 
-    public async Task SendText(long chatId, string text, InlineKeyboardMarkup? replyMarkup = null)
+    public async Task SendText(long chatId, string text, InlineKeyboardMarkup? replyMarkup = null, ParseMode parseMode = ParseMode.MarkdownV2)
     {
         if (replyMarkup is not null)
-            await _client.SendTextMessageAsync(new ChatId(chatId), text, replyMarkup: replyMarkup);
+            await _client.SendTextMessageAsync(new ChatId(chatId), text, replyMarkup: replyMarkup, parseMode: ParseMode.MarkdownV2);
         else
-            await _client.SendTextMessageAsync(new ChatId(chatId), text);
+            await _client.SendTextMessageAsync(new ChatId(chatId), text, parseMode: ParseMode.MarkdownV2);
     }
 
-    public async Task SendImage(long chatId, string imageUrl, string text, InlineKeyboardMarkup? replyMarkup)
+    public async Task SendImage(long chatId, string imageUrl, string text, InlineKeyboardMarkup? replyMarkup, ParseMode parseMode = ParseMode.MarkdownV2)
     {
         if (replyMarkup is not null)
-            await _client.SendPhotoAsync(new ChatId(chatId), new InputFileUrl(imageUrl), caption: text, replyMarkup: replyMarkup);
+            await _client.SendPhotoAsync(new ChatId(chatId), new InputFileUrl(imageUrl), caption: text, replyMarkup: replyMarkup, parseMode: parseMode);
         else
-            await _client.SendPhotoAsync(new ChatId(chatId), new InputFileUrl(imageUrl), caption: text);
+            await _client.SendPhotoAsync(new ChatId(chatId), new InputFileUrl(imageUrl), caption: text, parseMode: parseMode);
     }
 }
